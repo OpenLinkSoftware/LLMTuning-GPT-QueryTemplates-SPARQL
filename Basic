@@ -1,0 +1,77 @@
+# Basic SPARQL Query Templates
+
+## Basic SELECT 
+Provide a starting point for exploring knowledge graph <G> using schema.org terms;SELECT (SAMPLE(?s) AS ?EntityID) (COUNT(*) AS ?count) (?o AS ?EntityTypeID) FROM <G> WHERE { ?s a ?o . FILTER (CONTAINS(STR(?o),'schema.org'))} GROUP BY ?o ORDER BY DESC (?count) ;
+Provide a starting point for exploring schema:offers associated with knowledge graph <G> using schema.org terms;SELECT (SAMPLE(?s) AS ?EntityID) (COUNT(*) AS ?count) (?o AS ?EntityTypeID) FROM <G> WHERE { ?s a ?o . FILTER (CONTAINS(STR(?o),'schema.org/Offer'))} GROUP BY ?o ORDER BY DESC (?count) ;
+Provide a starting point for exploring across all knowledge graphs using schema.org terms;SELECT (SAMPLE(?s) AS ?EntityID) (COUNT(*) AS ?count) (?o AS ?EntityTypeID) WHERE { ?s a ?o . FILTER (CONTAINS(STR(?o),'schema.org'))} GROUP BY ?o ORDER BY DESC (?count) ;
+Provide a starting point for exploring knowledge graph <G>;SELECT (SAMPLE(?s) AS ?EntityID) (COUNT(*) AS ?count) (?o AS ?EntityTypeID) FROM <G> WHERE { ?s a ?o . } GROUP BY ?o ORDER BY DESC (?count) ;
+Provide a starting point for exploring across all knowledge graphs;SELECT (SAMPLE(?s) AS ?EntityID) (COUNT(*) AS ?count) (?o AS ?EntityTypeID) WHERE { ?s a ?o . } GROUP BY ?o ORDER BY DESC (?count) ;
+
+### Organizations
+Provide a starting point for exploring an <Org> centric <Org> knowledge graph <G> using schema.org terms;SELECT (SAMPLE(?s) AS ?EntityID) (COUNT(*) AS ?count) (?o AS ?EntityTypeID) FROM <G> WHERE { ?s a ?o . FILTER (CONTAINS(STR(?s),'<Org>')) FILTER (CONTAINS(STR(?o),'schema.org'))} GROUP BY ?o ORDER BY DESC (?count) ;
+
+### Offers
+List offers and prices associated with knowledge graph <G>, using terms from schema.org;SELECT ?offer ?price FROM <G> WHERE { ?offer a schema:Offer; schema:price ?price .} ORDER BY ASC (?price) ;
+List offers and prices from <Org> associated with knowledge graph <G>, using terms from schema.org;SELECT ?offer ?price FROM <G> WHERE { ?offer a schema:Offer; schema:price ?price . FILTER (CONTAINS(STR(?offer),'<Org>'))} ORDER BY ASC (?price) ;
+
+### Products and Offers
+List products associated with knowledge graph <G>, using terms from schema.org;SELECT ?product ?name ?offer ?price FROM <G> WHERE { ?product a schema:Product; schema:name ?name; (schema:offers | schema:itemOffered) ?offer. ?offer a schema:Offer; schema:price ?price .} ORDER BY ASC (?price) ;
+List products from <Org> associated with knowledge graph <G>, using terms from schema.org;SELECT ?product ?name ?offer ?price FROM <G> WHERE { ?product a schema:Product; schema:name ?name; (schema:offers | schema:itemOffered) ?offer. ?offer a schema:Offer; schema:price ?price . FILTER (CONTAINS(STR(?offer),'<Org>'))} ORDER BY ASC (?price) ;
+
+### Products 
+List products associated with knowledge graph <G>, using terms from schema.org;SELECT ?product ?name FROM <G> WHERE { ?product a schema:Product; schema:name ?name.} ORDER BY ASC (?name) ;
+List products from <Org> associated with knowledge graph <G>, using terms from schema.org;SELECT ?product ?name ?offer ?price FROM <G> WHERE { ?product a schema:Product; schema:name ?name. FILTER (CONTAINS(STR(?product),'<Org>'))} ORDER BY ASC (?price) ;
+
+### FAQ Page
+List FAQs associated with knowledge graph <G>, using terms from schema.org;SELECT ?page ?question ?name ?answerText FROM <G> WHERE { ?page a schema:FAQPage; schema:mainEntity ?question. ?question (schema:name|schema:title) ?name; (schema:acceptedAnswer|schema:suggestedAnswer) ?answer. ?answer schema:text ?answerText.} ORDER BY ASC (?name) ;
+List FAQs from <Org> associated with knowledge graph <G>, using terms from schema.org;SELECT ?page ?question ?name ?answerText FROM <G> WHERE { ?page a schema:FAQPage; schema:mainEntity ?question. ?question (schema:name|schema:title) ?name; (schema:acceptedAnswer|schema:suggestedAnswer) ?answer. ?answer schema:text ?answerText. FILTER (CONTAINS(STR(?page),'<Org>'))} ORDER BY ASC (?name) ;
+
+Get the nth question and its answer from FAQs associated with knowledge graph <G>, using terms from schema.org;SELECT ?page ?question ?name ?answerText FROM <G> WHERE { ?page a schema:FAQPage; schema:mainEntity ?question. ?question (schema:name|schema:title) ?name; (schema:acceptedAnswer|schema:suggestedAnswer) ?answer. ?answer schema:text ?answerText. } ORDER BY ASC (?name) OFFSET <N-1> LIMIT 1 ;
+Get the nth question and its answer from FAQs of <Org> associated with knowledge graph <G>, using terms from schema.org;SELECT ?page ?question ?name ?answerText FROM <G> WHERE { ?page a schema:FAQPage; schema:mainEntity ?question. ?question (schema:name|schema:title) ?name; (schema:acceptedAnswer|schema:suggestedAnswer) ?answer. ?answer schema:text ?answerText. FILTER (CONTAINS(STR(?page),'<Org>')) } ORDER BY ASC (?name) OFFSET <N-1> LIMIT 1 ;
+
+### Job Postings
+List Job Postings associated with knowledge graph <G>, using terms from schema.org;SELECT DISTINCT ?job ?name FROM <G> WHERE { ?job a schema:JobPosting; (schema:name|schema:title) ?name. } ;
+List Job Postings from <Org> associated with knowledge graph <G>, using terms from schema.org;SELECT DISTINCT ?job ?name ?org FROM <G> WHERE { ?job a schema:JobPosting; (schema:name|schema:title) ?name; schema:hiringOrganization ?org . FILTER (CONTAINS(STR(?org),'<Org>'))} ;
+
+### Search Actions
+List SearchActions associated with knowledge graph <G>, using terms from schema.org;SELECT ?action ?query ?target FROM <G> WHERE { ?action a schema:SearchAction; schema:query ?query; schema:target ?target .} ORDER BY ASC (?query) ;
+List SearchActions from <Org> associated with knowledge graph <G>, using terms from schema.org;SELECT ?action ?query ?target FROM <G> WHERE { ?action a schema:SearchAction; schema:query ?query; schema:target ?target. FILTER (CONTAINS(STR(?action),'<Org>'))} ORDER BY ASC (?query) ;
+
+### HowTos
+List HowTo guides associated with knowledge graph <G>, using terms from schema.org;
+```
+SELECT ?guide ?step ?name ?text FROM <G> WHERE { 
+  ?guide a schema:HowTo; 
+  schema:step ?step. 
+  ?step (schema:name|schema:text) ?text.
+  ?guide (schema:name|schema:title) ?name.
+} 
+ORDER BY ASC(?name)
+```
+
+List HowTo guides from <Org> associated with knowledge graph <G>, using terms from schema.org;
+```
+SELECT ?guide ?step ?name ?text FROM <G> WHERE { 
+  ?guide a schema:HowTo; 
+  schema:step ?step. 
+  ?step (schema:name|schema:text) ?text.
+  ?guide (schema:name|schema:title) ?name.
+  FILTER (CONTAINS(STR(?guide),'<Org>'))
+} 
+ORDER BY ASC(?name)
+```
+
+### Nth step in HowTos
+List the nth step from HowTos associated with knowledge graph <G>, using terms from schema.org;SELECT ?howto ?step ?text FROM <G> WHERE { ?howto a schema:HowTo; schema:step ?step. ?step schema:position <n>; schema:text ?text. } ORDER BY ?step LIMIT 1 OFFSET <n-1>
+
+List the nth step from HowTos from <Org> associated with knowledge graph <G>, using terms from schema.org;
+SELECT ?howto ?step ?text FROM <G> WHERE { ?howto a schema:HowTo; schema:step ?step. ?step schema:position <n>; schema:text ?text. FILTER (CONTAINS(STR(?howto),'<Org>')) } ORDER BY ?step LIMIT 1 OFFSET <n-1>
+
+### SELECT with Reasoning & Inference Across all Vocabularies
+Provide a starting point for exploring knowledge graph <G> with subClassOf reasoning enabled;DEFINE input:inference "urn:rdfs:subclass:subproperty:inference:rules" SELECT (SAMPLE(?s) AS ?EntityID) (COUNT(*) AS ?count) (?o AS ?EntityTypeID) FROM <G> WHERE { ?s a ?o.} GROUP BY ?o ORDER BY DESC (?count) ;
+
+### SELECT with Reasoning & Inference Scoped to Schema.org
+Provide a starting point for exploring knowledge graph <G> using schema.org terms with subClassOf reasoning enabled;DEFINE input:inference "urn:rdfs:subclass:subproperty:inference:rules" SELECT (SAMPLE(?s) AS ?EntityID) (COUNT(*) AS ?count) (?o AS ?EntityTypeID) FROM <G> WHERE { ?s a ?o . FILTER (CONTAINS(STR(?o),'schema.org'))} GROUP BY ?o ORDER BY DESC (?count) ;
+
+## DESCRIBE based
+Describe <A> associated with knowledge graphs <G>; DESCRIBE <A> FROM <G>;
