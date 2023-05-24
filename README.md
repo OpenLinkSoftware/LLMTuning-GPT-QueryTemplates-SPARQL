@@ -12,3 +12,7 @@ SPARQL based for fine-tunning a GPT (3.5 or 4.0) LLM. You simply load these temp
 1. Start a ChatGPT session (ideally, GPT4 for the most predictable experience)
 2. Paste all or a selection of templates using the prompt: Remember the following sparql query templates
 3. Execute a natural language query that's semantically equivalent to the prompt part of your template
+
+# Related
+
+* [Using SPARQL to Fine-tune ChatGPT's Large Language Model (LLM)](https://community.openlinksw.com/t/using-sparql-query-templates-to-fine-tune-chatgpts-large-language-model-llm/3842/4)
